@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acetic Acid Reaction Visualizer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Interactive Chemistry</p>
+          <h1>Acetic Acid in Water</h1>
+          <p class="lede">
+            Explore how CH<sub>3</sub>COOH partially dissociates, which
+            intermolecular forces dominate, and how concentration, temperature,
+            and solvent behavior change the system.
+          </p>
+        </div>
+        <div class="hero-note">
+          <span class="note-label">Chemistry note</span>
+          <p>
+            CH<sub>3</sub>COOH is a <strong>weak acid</strong>, not a weak
+            base. This model shows its weak-acid equilibrium in aqueous
+            solution.
+          </p>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="panel controls">
+          <div class="panel-heading">
+            <h2>Controls</h2>
+            <p>Tune the solution and reaction conditions.</p>
+          </div>
+
+          <label class="control">
+            <span class="control-top">
+              <span>Acid concentration</span>
+              <strong id="concentration-value">0.80 M</strong>
+            </span>
+            <input
+              id="concentration"
+              type="range"
+              min="0.1"
+              max="2.0"
+              step="0.05"
+              value="0.8"
+            />
+          </label>
+
+          <label class="control">
+            <span class="control-top">
+              <span>Dissociation target</span>
+              <strong id="dissociation-value">6.0% target</strong>
+            </span>
+            <input
+              id="dissociation"
+              type="range"
+              min="1"
+              max="20"
+              step="0.5"
+              value="6"
+            />
+          </label>
+
+          <label class="control">
+            <span class="control-top">
+              <span>Temperature</span>
+              <strong id="temperature-value">25 °C</strong>
+            </span>
+            <input
+              id="temperature"
+              type="range"
+              min="0"
+              max="90"
+              step="1"
+              value="25"
+            />
+          </label>
+
+          <label class="control">
+            <span class="control-top">
+              <span>Simulation speed</span>
+              <strong id="speed-value">1.0x</strong>
+            </span>
+            <input
+              id="speed"
+              type="range"
+              min="0.25"
+              max="3"
+              step="0.05"
+              value="1"
+            />
+          </label>
+
+          <label class="control">
+            <span class="control-top">
+              <span>Solvent polarity</span>
+              <strong id="polarity-value">70%</strong>
+            </span>
+            <input
+              id="polarity"
+              type="range"
+              min="20"
+              max="100"
+              step="1"
+              value="70"
+            />
+          </label>
+
+          <label class="control">
+            <span class="control-top">
+              <span>Particle density</span>
+              <strong id="density-value">48</strong>
+            </span>
+            <input
+              id="density"
+              type="range"
+              min="24"
+              max="88"
+              step="1"
+              value="48"
+            />
+          </label>
+        </section>
+
+        <section class="panel stage-panel">
+          <div class="panel-heading">
+            <h2>Solution Box</h2>
+            <p>
+              Each particle links to its strongest attraction or repulsion.
+              Warm gradients show attraction, cool gradients show repulsion,
+              and particle collisions drive dissociation and recombination.
+            </p>
+          </div>
+
+          <div class="reaction-stage">
+            <svg
+              id="force-overlay"
+              class="force-overlay"
+              viewBox="0 0 800 520"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            ></svg>
+            <div id="particle-layer" class="particle-layer"></div>
+          </div>
+
+          <div class="legend">
+            <div class="legend-item">
+              <span class="swatch acid"></span>
+              <span>CH<sub>3</sub>COOH</span>
+            </div>
+            <div class="legend-item">
+              <span class="swatch water"></span>
+              <span>H<sub>2</sub>O</span>
+            </div>
+            <div class="legend-item">
+              <span class="swatch acetate"></span>
+              <span>CH<sub>3</sub>COO<sup>-</sup></span>
+            </div>
+            <div class="legend-item">
+              <span class="swatch hydronium"></span>
+              <span>H<sub>3</sub>O<sup>+</sup></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel metrics">
+          <div class="panel-heading">
+            <h2>Reaction State</h2>
+            <p>Live values update as the system changes.</p>
+          </div>
+
+          <div class="equation-card">
+            <p class="equation">
+              CH<sub>3</sub>COOH + H<sub>2</sub>O ⇌ CH<sub>3</sub>COO<sup>-</sup> + H<sub>3</sub>O<sup>+</sup>
+            </p>
+            <p id="equilibrium-caption" class="equilibrium-caption">
+              Partial dissociation keeps the equilibrium left-favored.
+            </p>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card">
+              <span class="metric-label">pH</span>
+              <strong id="ph-value">2.32</strong>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Undissociated acid</span>
+              <strong id="acid-remaining">0.752 M</strong>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Acetate ion</span>
+              <strong id="acetate-value">0.048 M</strong>
+            </article>
+            <article class="metric-card">
+              <span class="metric-label">Hydronium ion</span>
+              <strong id="hydronium-value">0.048 M</strong>
+            </article>
+          </div>
+
+          <div class="species-breakdown">
+            <h3>Species count in the box</h3>
+            <p id="species-counts">
+              45 water molecules, 3 acetate ions, 3 hydronium ions, 45 neutral
+              acetic acid molecules.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
